@@ -13,23 +13,63 @@ Unofficial APIs for Investing.com website.
     <version>1.0.0</version>
 </dependency>
 ```
-- or install the jar module into your project, download from [git releases](https://github.com/PhamHuyThien/investing-api-java/releases/new)
+- or install the jar module into your project, download from [git releases](https://github.com/PhamHuyThien/investing-api-java/releases/)
 ### Example
+
 ```java
-InvestingApi investingApi = new InvestingApi();
-investingApi.setBrowserEngine(BrowserEngine.CHROMIUM); // optional: default CHROMIUM
-investingApi.setBrowserOption(new BrowserType.LaunchOptions().setHeadless(true)); // optional: default empty options
-investingApi.setUseBrowserContext(true); // optional: default false
-investingApi.init(); // call required
-ChartData chartData = investingApi.get(
-        "1", //provide a valid investing.com pairId. (Required)
-        Period.P1M, //Period of time, window size. Default P1M (1 month). Valid values: P1D, P1W, P1M, P3M, P6M, P1Y, P5Y, MAX.
-        Interval.PT1M, //Interval between results. Default P1D (1 day). Valid values: PT1M, PT5M, PT15M, PT30M, PT1H, PT5H, P1D, P1W, P1M.
-        PointsCount.PC120 //number of total results. Valid values seems to be 60, 70 90, 110, 120, 140 or 160.
-);
-System.out.println(chartData);
-investingApi.close();
+import home.thienph.investing_api_java.api.InvestingApi;
+
+public class InvestingApiTest {
+    public static void main(String[] args) {
+        InvestingApi investingApi = new InvestingApi();
+        investingApi.setBrowserEngine(BrowserEngine.CHROMIUM); // optional: default CHROMIUM
+        investingApi.setBrowserOption(new BrowserType.LaunchOptions().setHeadless(true)); // optional: default empty options
+        investingApi.setUseBrowserContext(true); // optional: default false
+        investingApi.init(); // call required, start only once in its lifetime
+        ChartData chartData = investingApi.get(
+                "1", //provide a valid investing.com pairId. (Required)
+                Period.P1M, //Period of time, window size. Default P1M (1 month). Valid values: P1D, P1W, P1M, P3M, P6M, P1Y, P5Y, MAX.
+                Interval.PT1M, //Interval between results. Default P1D (1 day). Valid values: PT1M, PT5M, PT15M, PT30M, PT1H, PT5H, P1D, P1W, P1M.
+                PointsCount.PC120 //number of total results. Valid values seems to be 60, 70 90, 110, 120, 140 or 160.
+        );
+        System.out.println(chartData);
+        investingApi.close();
+    }
+}
 ```
+- example combined with spring boot project
+
+```java
+import home.thienph.investing_api_java.api.InvestingApi;
+
+// .../configurations/InvestingApiConfig.java
+@Configuration
+@Slf4j
+public class InvestingApiConfig {
+    @Bean
+    public InvestingApi investingApi() { // bean injection
+        InvestingApi investingApi = new InvestingApi();
+        investingApi.setBrowserEngine(BrowserEngine.CHROMIUM);
+        investingApi.setBrowserOption(new BrowserType.LaunchOptions().setHeadless(true));
+        investingApi.setUseBrowserContext(true);
+        investingApi.init();
+        log.info("InvestingApi initialized !!!");
+        return investingApi;
+    }
+}
+
+// .../controllers/ChartController.java
+@Controller
+public class ChartController {
+    @GetMapping("/chart")
+    @ResponseBody
+    public ChartData chart(@RequestParam("pairId") String pairId) {
+        return investingApi.get(pairId);
+    }
+}
+```
+
+
 ### How to get pairId?
 
 - step 1: visit [this link](https://www.investing.com/) and search for the pair you want to get pairId.
