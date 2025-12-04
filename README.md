@@ -17,8 +17,6 @@ Unofficial APIs for Investing.com website.
 ### Example
 
 ```java
-import home.thienph.investing_api_java.api.InvestingApi;
-
 public class InvestingApiTest {
     public static void main(String[] args) {
         InvestingApi investingApi = new InvestingApi();
@@ -40,8 +38,6 @@ public class InvestingApiTest {
 - example combined with spring boot project
 
 ```java
-import home.thienph.investing_api_java.api.InvestingApi;
-
 // .../configurations/InvestingApiConfig.java
 @Configuration
 @Slf4j
@@ -57,10 +53,12 @@ public class InvestingApiConfig {
         return investingApi;
     }
 }
-
 // .../controllers/ChartController.java
 @Controller
 public class ChartController {
+    @Autowrired
+    InvestingApi investingApi;
+    
     @GetMapping("/chart")
     @ResponseBody
     public ChartData chart(@RequestParam("pairId") String pairId) {
