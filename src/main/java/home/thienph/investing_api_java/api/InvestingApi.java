@@ -73,11 +73,16 @@ public class InvestingApi {
     private Browser getBrowser() {
         if (playwright == null)
             throw new InvestingApiException("Playwright is not initialized");
-        return switch (browserEngine) {
-            case CHROMIUM -> playwright.chromium().launch(BrowserOption);
-            case FIREFOX -> playwright.firefox().launch(BrowserOption);
-            case WEBKIT -> playwright.webkit().launch(BrowserOption);
-        };
+        switch (browserEngine) {
+            case CHROMIUM:
+                return playwright.chromium().launch(BrowserOption);
+            case FIREFOX:
+                return playwright.firefox().launch(BrowserOption);
+            case WEBKIT:
+                return playwright.webkit().launch(BrowserOption);
+            default:
+                throw new IllegalArgumentException("Unknown browser engine: " + browserEngine);
+        }
     }
 
     private Page newPage() {

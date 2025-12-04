@@ -7,23 +7,26 @@ Unofficial APIs for Investing.com website.
  - step 1: compile with `mvn clean install`
  - step 2: add to your `pom.xml`
 ```xml
-<dependency>
-    <groupId>home.thienph</groupId>
-    <artifactId>investing-api-java</artifactId>
-    <version>1.0.0</version>
-</dependency>
+<dependencies>
+    <dependency>
+        <groupId>home.thienph</groupId>
+        <artifactId>investing-api-java</artifactId>
+        <version>1.0.0</version>
+    </dependency>
+</dependencies>
 ```
 - or install the jar module into your project, download from [git releases](https://github.com/PhamHuyThien/investing-api-java/releases/)
 ### Example
 
 ```java
+import home.thienph.investing_api_java.api.InvestingApi;
 public class InvestingApiTest {
     public static void main(String[] args) {
         InvestingApi investingApi = new InvestingApi();
         investingApi.setBrowserEngine(BrowserEngine.CHROMIUM); // optional: default CHROMIUM
         investingApi.setBrowserOption(new BrowserType.LaunchOptions().setHeadless(true)); // optional: default empty options
         investingApi.setUseBrowserContext(true); // optional: default false
-        investingApi.init(); // call required, start only once in its lifetime
+        investingApi.initialize(); // call required, start only once in its lifetime
         ChartData chartData = investingApi.get(
                 "1", //provide a valid investing.com pairId. (Required)
                 Period.P1M, //Period of time, window size. Default P1M (1 month). Valid values: P1D, P1W, P1M, P3M, P6M, P1Y, P5Y, MAX.
@@ -38,6 +41,7 @@ public class InvestingApiTest {
 - example combined with spring boot project
 
 ```java
+import home.thienph.investing_api_java.api.InvestingApi;
 // .../configurations/InvestingApiConfig.java
 @Configuration
 @Slf4j
@@ -48,17 +52,17 @@ public class InvestingApiConfig {
         investingApi.setBrowserEngine(BrowserEngine.CHROMIUM);
         investingApi.setBrowserOption(new BrowserType.LaunchOptions().setHeadless(true));
         investingApi.setUseBrowserContext(true);
-        investingApi.init();
-        log.info("InvestingApi initialized !!!");
+        investingApi.initialize();
         return investingApi;
     }
 }
+
 // .../controllers/ChartController.java
 @Controller
 public class ChartController {
     @Autowrired
     InvestingApi investingApi;
-    
+
     @GetMapping("/chart")
     @ResponseBody
     public ChartData chart(@RequestParam("pairId") String pairId) {
@@ -76,6 +80,7 @@ public class ChartController {
 
 ### Important Note!!!
 
+- Support Java 8+
 - Playwright library is not thread-safe.
 - Your project only instantiates a single InvestingApi class, otherwise errors may occur.
 - The `InvestingApi.get(...)` function is synchronized, even if you use multithreading, you still have to wait for each other.
