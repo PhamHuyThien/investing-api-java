@@ -1,0 +1,32 @@
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <!-- =========================
+         Properties
+         ========================= -->
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <!-- =========================
+         Console Appender with color
+         ========================= -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %cyan(%logger{36}) - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- =========================
+         Root Logger
+         ========================= -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- =========================
+         Logger overrides
+         ========================= -->
+    <logger name="home.thienph" level="DEBUG"/>
+    <logger name="com.microsoft.playwright" level="WARN"/>
+
+</configuration>
